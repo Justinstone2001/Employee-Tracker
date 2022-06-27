@@ -1,0 +1,20 @@
+DROP DATABASE IF EXISTS classlist_db;
+CREATE DATABASE classlist_db;
+
+USE classlist_db;
+
+CREATE TABLE department (
+  id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+  department_name VARCHAR(30) NOT NULL,
+);
+
+CREATE TABLE roles(
+  id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+  role_name VARCHAR(30) NOT NULL,
+);
+
+CREATE TABLE employee (
+  id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+  employee_name VARCHAR(30) NOT NULL,
+);
+
