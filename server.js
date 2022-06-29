@@ -4,22 +4,41 @@ require('console.table');
 
 const db = mysql.createConnection(
   {
+    host: 'localhost',
     user: 'root',
+    password: '',
     database: 'classlist_db',
   }
 );
 
-const fn = (options) => {
-  if (options === 'exit') return process.exit();
+db.connect(function (err) {
+    if (err) throw err;
+    init();
+});
 
-  const query = 'SELECT * FROM students' + (('enrolled' in options) ? ' WHERE ?' : '');
+const allEmployees = () => {
+    db.query('SELECT * FROM employee', function (err, results) {
+        if (err) return console.error(err);
+        console.table(results);
+        init();
+    });
+}
 
-  db.query(query, options, function (err, results) {
-    if (err) return console.error(err);
-    console.table(results);
-    return init();
-  });
-};
+const allRoles = () => {
+ db.query('SELECT * FROM role', function (err, results) {
+     if (err) return console.error(err);
+     console.table(results);
+     init();
+    });
+}
+
+const allDepartments = () => {
+    db.query('SELECT * FROM department', function (err, results) {
+        if (err) return console.error(err);
+        console.table(results);
+        init();
+    });
+}
 
 const init = () => {
   const choices = [
