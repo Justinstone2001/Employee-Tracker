@@ -29,7 +29,7 @@ const allEmployees = () => {
 }
 
 const allRoles = () => {
-    db.query('SELECT employee_role.id, employee_role.title, department.name AS department, employee_role.salary FROM employee_role LEFT JOIN department ON employee_role.department_id=department.id', function (err, results) {
+    db.query('SELECT employee_role.id, employee_role.title, department.department_name AS department, employee_role.salary FROM employee_role LEFT JOIN department ON employee_role.department_id=department.id', function (err, results) {
         if (err) return console.error(err);
         console.table(results);
         init();
@@ -69,7 +69,7 @@ const addRole = () => {
                 message: 'What is the salary of the role?'
             }
         ]).then(function (answer) {
-            db.query("INSERT INTO role (title, department_id, salary) VALUES (?,?,?)", [answer.roleName, answer.roleDeptId, answer.roleSalary], function (err, res) {
+            db.query("INSERT INTO employee_role (title, department_id, salary) VALUES (?,?,?)", [answer.roleName, answer.roleDeptId, answer.roleSalary], function (err, res) {
                 if (err) throw err;
                 console.table(res);
                 init();
@@ -79,13 +79,13 @@ const addRole = () => {
 }
 
 const addEmployee = () => {
-    db.query('SELECT employee.id, CONCAT(employee.first_name, " ", employee.last_name) AS employee, role.title, department.name AS department, role.salary, CONCAT(manager.first_name, " ", manager.last_name) AS manager FROM employee LEFT JOIN role ON employee.role_id = role.id LEFT JOIN department ON role.department_id = department.id LEFT JOIN employee manager ON manager.id = employee.manager_id', function (err, res) {
+    db.query('SELECT employee_info.id, CONCAT(employee_info.first_name, " ", employee_info.last_name) AS employee_info, employee_role.title, department.department_name AS department, employee_role.salary, CONCAT(manager.first_name, " ", manager.last_name) AS manager FROM employee_info LEFT JOIN employee_role ON employee_info.role_id = employee_role.id LEFT JOIN department ON employee_role.department_id = department.id LEFT JOIN employee_info manager ON manager.id = employee_info.manager_id', function (err, res) {
         if (err) return console.error(err);
-        const employeeChoices = res.map(({ id, employee }) => ({
-            name: employee,
+        const employeeChoices = res.map(({ id, employee_info }) => ({
+            name: employee_info,
             value: id
         })).filter(e => e);
-        db.query('SELECT role.id, role.title, department.name AS department, role.salary FROM role LEFT JOIN department ON role.department_id=department.id', function (err, results) {
+        db.query('SELECT employee_role.id, employee_role.title, department.department_name AS department, employee_role.salary FROM employee_role LEFT JOIN department ON employee_role.department_id=department.id', function (err, results) {
             if (err) return console.error(err);
             console.table(results);
             const roleChoices = results.map(({ id, title }) => ({
@@ -117,7 +117,7 @@ const addEmployee = () => {
                         employeeChoices.concat({ name: 'No Manager', value: null }),
                 }
             ]).then(function (answer) {
-                db.query("INSERT INTO employee (first_name, last_name, role_id, manager_id) VALUES (?,?,?,?)", [answer.employeeFirstName, answer.employeeLastName, answer.employeeRoleId, answer.employeeManagerId], function (err, res) {
+                db.query("INSERT INTO employee_info (first_name, last_name, role_id, manager_id) VALUES (?,?,?,?)", [answer.employeeFirstName, answer.employeeLastName, answer.employeeRoleId, answer.employeeManagerId], function (err, res) {
                     if (err) throw err;
                     console.table(res);
                     init();
@@ -133,7 +133,7 @@ const addDepartment = () => {
         name: 'departmentName',
         message: 'What is the name of the department you would like to add?'
     }]).then(function (answer) {
-        db.query('INSERT INTO department (name) VALUES (?)', [answer.departmentName], function (err, res) {
+        db.query('INSERT INTO department (department_name) VALUES (?)', [answer.departmentName], function (err, res) {
             if (err) throw err;
             console.table(res);
             init();
